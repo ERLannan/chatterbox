@@ -86,7 +86,7 @@ router.post('/login', (req, res) => {
           name: user.name,
           avatar: user.avatar
         };
-        jwt.sign(payload, keys.secret, { expiresIn: 1440 }, (err, token) => {
+        jwt.sign(payload, keys.secret, { expiresIn: '24h' }, (err, token) => {
           const bearerToken = 'Bearer ' + token;
           pnManager.authorizeToken(bearerToken);
 
