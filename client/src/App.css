@@ -1,5 +1,5 @@
 .fullpage-container {
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .main-navbar {
@@ -16,17 +16,12 @@
 
 /* Chat Room */
 .chat-room {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 56px;
+  width: 100%;
 }
-
 .messages-list {
   display: flex;
   flex-direction: column-reverse;
-  margin-top: 0;
-  padding-top: 0;
-  height: 97%;
+  height: 97vh;
   overflow: scroll;
 }
 

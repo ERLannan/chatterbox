@@ -6,26 +6,26 @@ import { publish, subscribe } from '../../config/keys';
 
 // import PropTypes from 'prop-types';
 
-import ChatRoom from '../../components/chatterbox/ChatRoom';
+import ChatRoom from '../../components/chatterbox/chatroom/ChatRoom';
 
 export class Chatterbox extends Component {
   constructor(props) {
     super(props);
-
-    console.log(localStorage.jwtToken);
+    const { user } = this.props.auth;
 
     this.pubnub = new PubNubReact({
       publishKey: publish,
       subscribeKey: subscribe,
       authKey: localStorage.jwtToken,
-      uuid: this.props.auth.name
+      uuid: user.id
     });
 
     this.pubnub.init(this);
   }
 
   state = {
-    messages: []
+    messages: [],
+    id: ''
   };
 
   addMessage = msg => {
@@ -35,6 +35,11 @@ export class Chatterbox extends Component {
   };
 
   componentWillMount() {
+    const { user } = this.props.auth;
+    this.setState({
+      id: user.id
+    });
+
     this.pubnub.history(
       {
         channel: 'global_channel',
@@ -42,7 +47,6 @@ export class Chatterbox extends Component {
       },
       (status, response) => {
         response.messages.forEach(msg => {
-          console.log(msg);
           this.addMessage(msg);
         });
       }
@@ -65,16 +69,14 @@ export class Chatterbox extends Component {
   }
 
   onPublishHandler = msg => {
-    console.log(msg);
-
     const { user } = this.props.auth;
-    console.log(user);
     this.pubnub.publish({
       message: {
         text: msg,
         data: {
           name: user.name,
-          avatar: user.avatar
+          avatar: user.avatar,
+          id: this.state.id
         }
       },
       channel: 'global_channel'
@@ -82,17 +84,21 @@ export class Chatterbox extends Component {
   };
 
   render() {
-    // const messages = this.pubnub.getMessage('global_channel');
     const messages = [...this.state.messages];
-    console.log(messages);
     return (
-      <Fragment>
-        <ChatRoom
-          messages={messages}
-          publishMessage={this.onPublishHandler}
-          pnID={this.pubnub.getUUID()}
-        />
-      </Fragment>
+      <div className='chat-room bg-darkgrey mx-auto'>
+        <div className='row m-0'>
+          <div className='col-md-2'>something</div>
+          <div className='col-md-8 col-12 bg-darkgrey chat-container'>
+            <ChatRoom
+              messages={messages}
+              publishMessage={this.onPublishHandler}
+              id={this.state.id}
+            />
+          </div>
+          <div className='col-md-2'>something</div>
+        </div>
+      </div>
     );
   }
 }
@@ -108,3 +114,6 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(Chatterbox);
+
+// testing json for use in the PubNub debug console
+// {"text":"hello from the console!","data":{"name":"PubNub Console", "avatar":"http://www.gravatar.com/avatar/3b3be63a4c2a439b013787725dfce802", "id":"pnconsole"}}
