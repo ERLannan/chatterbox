@@ -4,7 +4,8 @@ const { publish, subscribe, secret } = require('../config/keys');
 const pubnub = new PubNub({
   publishKey: publish,
   subscribeKey: subscribe,
-  secretKey: secret
+  secretKey: secret,
+  uuid: 'chatterboxserver'
 });
 
 pnManager = {
@@ -12,15 +13,15 @@ pnManager = {
     pubnub.addListener({
       status: function(statusEvent) {
         if (statusEvent.category === 'PNConnectedCategory') {
-          var publishConfig = {
-            channel: 'global_channel',
-            message: {
-              text: 'Server started'
-            }
-          };
-          pubnub.publish(publishConfig, function(status, response) {
-            console.log(status, response);
-          });
+          // var publishConfig = {
+          //   channel: 'global_channel',
+          //   message: {
+          //     text: 'Server started'
+          //   }
+          // };
+          // pubnub.publish(publishConfig, function(status, response) {
+          //   console.log(status, response);
+          // });
         }
       },
       message: function(msg) {

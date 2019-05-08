@@ -22,7 +22,8 @@
 }
 
 .messages-list {
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column-reverse;
   margin-top: 0;
   padding-top: 0;
   height: 97%;
