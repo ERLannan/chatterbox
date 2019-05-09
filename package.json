@@ -12,6 +12,9 @@
   },
   "author": "Eric",
   "license": "MIT",
+  "engines": {
+    "node": "11.13.0"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
