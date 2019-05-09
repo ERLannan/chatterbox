@@ -3,7 +3,7 @@
 }
 
 .main-navbar {
-  border-bottom: 1px solid #0abfbc;
+  border-bottom: 1px solid #fc354c;
 }
 
 .App {
@@ -29,20 +29,27 @@
   flex-direction: column-reverse;
   height: 100vh;
   overflow: scroll;
+  font-size: 0.8em;
 }
 
 .chat-container {
-  width: 70%;
-  border-left: 1px solid #0abfbc;
-  border-right: 1px solid #0abfbc;
+  width: 100%;
 }
 
 .chat-message-container .chat-profile-image {
-  margin-top: 2em;
+  margin-top: 1em;
+
+  height: 40px;
+  width: 40px;
 }
 
 .chat-message-container .chat-message-text {
-  font-size: 1.5em;
+  width: 70%;
+}
+
+.room-list {
+  width: 15%;
+  text-align: center;
 }
 
 /* User list */
@@ -56,7 +63,7 @@
 }
 
 .user-list-label {
-  font-size: 1.3em;
+  font-size: 0.8em;
 }
 
 .latest-profiles-img {
@@ -64,7 +71,20 @@
   height: 40px;
 }
 
-.text-brightred {
+@media (min-width: 768px) {
+  .chat-container {
+    border-right: 1px solid #fc354c;
+  }
+}
+
+/* // Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .chat-container {
+    border-left: 1px solid #fc354c;
+    border-right: 1px solid #fc354c;
+  }
+}
+*/ .text-brightred {
   color: #fc354c;
 }
 

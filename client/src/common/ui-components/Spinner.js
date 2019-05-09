@@ -1,5 +1,5 @@
 import React from 'react';
-import spinner from '../../../img/Blocks-1s-200px.gif';
+import spinner from '../../img/Cube-1s-200px.gif';
 
 const Spinner = () => {
   return (
