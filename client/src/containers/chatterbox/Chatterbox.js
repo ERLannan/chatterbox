@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PubNubReact from 'pubnub-react';
-import { publish, subscribe } from '../../config/keys';
 import Spinner from '../../common/ui-components/Spinner';
 
 // import PropTypes from 'prop-types';
@@ -17,26 +16,13 @@ export class Chatterbox extends Component {
     const { user } = this.props.auth;
 
     this.pubnub = new PubNubReact({
-      publishKey: publish,
-      subscribeKey: subscribe,
+      publishKey: 'pub-c-5292021b-e55c-4080-a086-689389d143de',
+      subscribeKey: 'sub-c-936f22c2-82cf-11e7-9034-1e9edc6dd7f6',
       authKey: localStorage.jwtToken,
       uuid: user.name
     });
 
     this.pubnub.init(this);
-    this.pubnub.addListener({
-      status: function(statusEvent) {
-        console.log(statusEvent);
-        if (statusEvent.category === 'PNConnectedCategory') {
-        }
-      },
-      message: function(message) {
-        // handle message
-      },
-      presence: function(presenceEvent) {
-        // handle presence
-      }
-    });
   }
 
   state = {
@@ -56,6 +42,19 @@ export class Chatterbox extends Component {
     const { user } = this.props.auth;
     this.setState({
       id: user.id
+    });
+    this.pubnub.addListener({
+      status: function(statusEvent) {
+        console.log(statusEvent);
+        if (statusEvent.category === 'PNConnectedCategory') {
+        }
+      },
+      message: function(message) {
+        // handle message
+      },
+      presence: function(presenceEvent) {
+        // handle presence
+      }
     });
   }
   componentDidMount() {
