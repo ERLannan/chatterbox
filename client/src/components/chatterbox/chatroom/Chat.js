@@ -31,9 +31,7 @@ function Chat(props) {
     })
     .reverse();
 
-  return (
-    <div className='messages-list align-self-stretch'>{messagesContent}</div>
-  );
+  return <div className='messages-list'>{messagesContent}</div>;
 }
 
 Chat.propTypes = {

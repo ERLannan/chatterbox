@@ -28,15 +28,15 @@ pnManager = {
         console.log(msg.message.text);
       }
     });
-    pubnub.subscribe({
-      channels: ['global_channel']
-    });
+    // pubnub.subscribe({
+    //   channels: ['global_channel']
+    // });
   },
   authorizeToken: jwtToken => {
     console.log(jwtToken);
     pubnub.grant(
       {
-        channels: ['global_channel'],
+        channels: ['global_channel', 'global_channel-pnpres'],
         // channelGroups: [cg1, cg2],
         authKeys: [jwtToken],
         ttl: 1440, // 0 for infinite

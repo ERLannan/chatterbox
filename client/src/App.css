@@ -1,9 +1,14 @@
 .fullpage-container {
-  /* height: 100vh; */
+  height: 100vh;
 }
 
 .main-navbar {
   border-bottom: 1px solid #0abfbc;
+}
+
+.App {
+  height: 100vh;
+  width: 100vw;
 }
 
 .landing {
@@ -16,16 +21,18 @@
 
 /* Chat Room */
 .chat-room {
-  width: 100%;
+  height: 100%;
+  width: 100vw;
 }
 .messages-list {
   display: flex;
   flex-direction: column-reverse;
-  height: 97vh;
+  height: 100vh;
   overflow: scroll;
 }
 
 .chat-container {
+  width: 70%;
   border-left: 1px solid #0abfbc;
   border-right: 1px solid #0abfbc;
 }
@@ -36,6 +43,20 @@
 
 .chat-message-container .chat-message-text {
   font-size: 1.5em;
+}
+
+/* User list */
+.user-list {
+  width: 15%;
+}
+
+.user-list-img {
+  height: 2em;
+  width: 2em;
+}
+
+.user-list-label {
+  font-size: 1.3em;
 }
 
 .latest-profiles-img {

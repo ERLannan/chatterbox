@@ -37,11 +37,11 @@ export class ChatRoom extends Component {
         />
         <div className='message-input fluid-container'>
           <form onSubmit={this.onSubmit}>
-            <div className=' form-group d-flex justify-content-center p-1 mt-2'>
+            <div className=' form-group d-flex justify-content-center pt-3'>
               <div className='col-10'>
                 <input
                   type='text'
-                  className='form-control mb-2'
+                  className='form-control pb-2'
                   id='inlineFormInput'
                   placeholder='Message'
                   name='message'
@@ -51,10 +51,7 @@ export class ChatRoom extends Component {
               </div>
 
               <div className='col-2'>
-                <button
-                  type='submit'
-                  className='btn btn-block btn-brightred mb-2'
-                >
+                <button type='submit' className='btn btn-block btn-brightred'>
                   Send
                 </button>
               </div>
@@ -74,8 +71,7 @@ ChatRoom.propTypes = {
 
 export default ChatRoom;
 
-{
-  /* <div className='row'>
+/* <div className='row'>
           <div className='col-2 bg-dark'>
             <p>something</p>
           </div>
@@ -114,4 +110,3 @@ export default ChatRoom;
             <p>something</p>
           </div>
         </div> */
-}

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PubNubReact from 'pubnub-react';
@@ -7,6 +7,7 @@ import { publish, subscribe } from '../../config/keys';
 // import PropTypes from 'prop-types';
 
 import ChatRoom from '../../components/chatterbox/chatroom/ChatRoom';
+import UserList from '../../components/chatterbox/userlist/UserList';
 
 export class Chatterbox extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export class Chatterbox extends Component {
       publishKey: publish,
       subscribeKey: subscribe,
       authKey: localStorage.jwtToken,
-      uuid: user.id
+      uuid: user.name
     });
 
     this.pubnub.init(this);
@@ -25,7 +26,8 @@ export class Chatterbox extends Component {
 
   state = {
     messages: [],
-    id: ''
+    id: '',
+    presence: {}
   };
 
   addMessage = msg => {
@@ -43,7 +45,7 @@ export class Chatterbox extends Component {
     this.pubnub.history(
       {
         channel: 'global_channel',
-        count: 10 // 100 is the default
+        count: 20 // 100 is the default
       },
       (status, response) => {
         response.messages.forEach(msg => {
@@ -53,7 +55,43 @@ export class Chatterbox extends Component {
     );
 
     this.pubnub.subscribe({
-      channels: ['global_channel']
+      channels: ['global_channel'],
+      withPresence: true
+    });
+
+    this.pubnub.hereNow(
+      {
+        channels: ['global_channel'],
+        includeUUIDs: true
+      },
+      (status, response) => {
+        const channelPres = {};
+        Object.keys(response.channels).forEach(chName => {
+          const users = response.channels[chName].occupants.map(
+            occupant => occupant.uuid
+          );
+          channelPres[chName] = users;
+          console.log(channelPres);
+          this.setState({ presence: channelPres });
+        });
+      }
+    );
+
+    this.pubnub.getPresence('global_channel', presence => {
+      console.log(presence);
+      if (presence.action === 'join') {
+        const prevState = this.state.presence;
+        prevState[presence.channel].push(presence.uuid);
+        this.setState({ presence: prevState });
+      } else if (presence.action === 'leave') {
+        const prevState = this.state.presence;
+        const newUserList = prevState[presence.channel].filter(user => {
+          return user !== presence.uuid;
+        });
+        console.log(newUserList);
+        prevState[presence.channel] = newUserList;
+        this.setState({ presence: prevState });
+      }
     });
 
     this.pubnub.getMessage('global_channel', msg => {
@@ -85,18 +123,28 @@ export class Chatterbox extends Component {
 
   render() {
     const messages = [...this.state.messages];
+    // const presence = this.pubnub.getPresence('global_channel');
+    const userList =
+      this.state.presence['global_channel'] !== undefined ? (
+        <UserList users={this.state.presence['global_channel']} />
+      ) : null;
+
     return (
-      <div className='chat-room bg-darkgrey mx-auto'>
-        <div className='row m-0'>
-          <div className='col-md-2'>something</div>
-          <div className='col-md-8 col-12 bg-darkgrey chat-container'>
+      <div className='fluid-container fullpage-container bg-secondary text-white pt-5'>
+        <div className='d-flex flex-row justify-content-between chat-room'>
+          <div className='fluid-container user-list'>{userList}</div>
+          <div
+            className='chat-container fluid-container d-flex flex-column justify-content-center'
+            // style='width: 70%; background-color:cornflowerblue'
+          >
             <ChatRoom
               messages={messages}
               publishMessage={this.onPublishHandler}
               id={this.state.id}
             />
           </div>
-          <div className='col-md-2'>something</div>
+
+          <div className='container pt-2 user-list'>{userList}</div>
         </div>
       </div>
     );

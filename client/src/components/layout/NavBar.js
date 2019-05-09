@@ -97,7 +97,7 @@ class Navbar extends Component {
       // <div >className={classes.Navbar}>
 
       <div>
-        <nav className='main-navbar navbar fixed-top navbar-expand-sm navbar-dark bg-darkgrey mb-4'>
+        <nav className='main-navbar navbar fixed-top navbar-expand-sm navbar-dark bg-darkgrey'>
           <div className='container'>
             <Link className='navbar-brand' to='/'>
               Chatterbox
