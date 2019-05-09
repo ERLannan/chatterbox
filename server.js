@@ -5,6 +5,7 @@ const passport = require('passport');
 
 const users = require('./routes/api/users');
 const pnManager = require('./pubnub/pubnub-manager');
+const path = require('path');
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
