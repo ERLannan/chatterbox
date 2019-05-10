@@ -35,26 +35,21 @@ export class ChatRoom extends Component {
           onChange={this.onChange}
           message={this.state.message}
         />
-        <div className='message-input fluid-container'>
-          <form onSubmit={this.onSubmit}>
-            <div className=' form-group d-flex justify-content-center pt-3'>
-              <div className='col-10'>
-                <input
-                  type='text'
-                  className='form-control pb-2'
-                  id='inlineFormInput'
-                  placeholder='Message'
-                  name='message'
-                  value={this.state.message}
-                  onChange={this.onChange}
-                />
-              </div>
-
-              <div className='col-2'>
-                <button type='submit' className='btn btn-block btn-brightred'>
-                  Send
-                </button>
-              </div>
+        <div className=' message-input fluid-container bg-darkgrey m-0'>
+          <form onSubmit={this.onSubmit} className='m-0 p-0'>
+            <div className='flex-group d-flex py-2'>
+              <input
+                type='text'
+                className='form-control ml-3 mr-2'
+                id='inlineFormInput'
+                placeholder='Message'
+                name='message'
+                value={this.state.message}
+                onChange={this.onChange}
+              />
+              <button type='submit' className='btn btn-brightred mr-2'>
+                Send
+              </button>
             </div>
           </form>
         </div>
@@ -70,43 +65,3 @@ ChatRoom.propTypes = {
 };
 
 export default ChatRoom;
-
-/* <div className='row'>
-          <div className='col-2 bg-dark'>
-            <p>something</p>
-          </div>
-          <div className='col-8 shadow bg-darkgrey chat-container'>
-            <div className='row d-block flex flex-column'>
-              {<Chat messages={msgs} id={this.props.id} />}
-              <div className='align-bottom'>
-                <form onSubmit={this.onSubmit}>
-                  <div className=' form-group d-flex justify-content-center p-1 mt-2'>
-                    <div className='col-10'>
-                      <input
-                        type='text'
-                        className='form-control mb-2'
-                        id='inlineFormInput'
-                        placeholder='Message'
-                        name='message'
-                        value={this.state.message}
-                        onChange={this.onChange}
-                      />
-                    </div>
-
-                    <div className='col-2'>
-                      <button
-                        type='submit'
-                        className='btn btn-block btn-brightred mb-2'
-                      >
-                        Send
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div className='col-2 bg-dark'>
-            <p>something</p>
-          </div>
-        </div> */

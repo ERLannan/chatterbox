@@ -43,19 +43,6 @@ export class Chatterbox extends Component {
     this.setState({
       id: user.id
     });
-    this.pubnub.addListener({
-      status: function(statusEvent) {
-        console.log(statusEvent);
-        if (statusEvent.category === 'PNConnectedCategory') {
-        }
-      },
-      message: function(message) {
-        // handle message
-      },
-      presence: function(presenceEvent) {
-        // handle presence
-      }
-    });
   }
   componentDidMount() {
     setTimeout(() => {
@@ -87,7 +74,6 @@ export class Chatterbox extends Component {
 
   render() {
     const messages = [...this.state.messages];
-    // const presence = this.pubnub.getPresence('global_channel');
 
     const userList =
       this.state.presence['global_channel'] !== undefined ? (
