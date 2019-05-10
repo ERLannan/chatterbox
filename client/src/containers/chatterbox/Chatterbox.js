@@ -136,7 +136,6 @@ export class Chatterbox extends Component {
 
   getPresence = chanName => {
     this.pubnub.getPresence(chanName, presence => {
-      console.log(presence);
       if (presence.action === 'join') {
         const prevState = this.state.presence;
 
