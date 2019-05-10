@@ -162,8 +162,6 @@ export class Chatterbox extends Component {
         count: count // 100 is the default
       },
       (status, response) => {
-        console.log(status);
-        console.log(response);
         response.messages.forEach(msg => {
           this.addMessage(msg);
         });
