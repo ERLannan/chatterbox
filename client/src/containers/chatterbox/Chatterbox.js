@@ -92,7 +92,7 @@ export class Chatterbox extends Component {
     ) : (
       <div className='d-flex flex-row justify-content-between chat-room'>
         <div className='container pt-2 room-list d-none d-lg-block'>
-          <h4>Rooms</h4>
+          <h5>Rooms</h5>
           <RoomList rooms={keys} />
         </div>
         <div className='chat-container fluid-container d-flex flex-column justify-content-center'>
@@ -103,7 +103,7 @@ export class Chatterbox extends Component {
           />
         </div>
         <div className='container pt-2 user-list text-center d-none d-md-block'>
-          <h4>Users</h4>
+          <h5>Users</h5>
           {userList}
         </div>
       </div>
@@ -139,8 +139,11 @@ export class Chatterbox extends Component {
       console.log(presence);
       if (presence.action === 'join') {
         const prevState = this.state.presence;
-        prevState[presence.channel].push(presence.uuid);
-        this.setState({ presence: prevState });
+
+        if (!prevState[presence.channel].includes(presence.uuid)) {
+          prevState[presence.channel].push(presence.uuid);
+          this.setState({ presence: prevState });
+        }
       } else if (presence.action === 'leave') {
         const prevState = this.state.presence;
         const newUserList = prevState[presence.channel].filter(user => {
