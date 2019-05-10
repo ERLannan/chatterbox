@@ -29,7 +29,8 @@ export class Chatterbox extends Component {
     messages: [],
     id: '',
     presence: {},
-    loading: true
+    loading: true,
+    currentChannel: 'global_channel'
   };
 
   addMessage = msg => {
@@ -43,11 +44,26 @@ export class Chatterbox extends Component {
     this.setState({
       id: user.id
     });
+    this.pubnub.addListener({
+      status: statusEvent => {
+        console.log(statusEvent);
+        if (statusEvent.category === 'PNConnectedCategory') {
+          this.setState({ loading: false });
+          this.getHistoryAndPresence();
+        }
+      },
+      message: function(message) {
+        // handle message
+      },
+      presence: function(presenceEvent) {
+        // handle presence
+      }
+    });
   }
   componentDidMount() {
     setTimeout(() => {
       this.setState({ loading: false });
-      this.connectToChannel('global_channel');
+      this.subscribeToChannel(this.state.currentChannel);
     }, 3000);
   }
 
@@ -116,10 +132,10 @@ export class Chatterbox extends Component {
     );
   }
   /// PubNub methods
-  connectToChannel = chanName => {
-    this.getHistory(chanName, 5);
-    this.subscribeToChannel(chanName);
+  getHistoryAndPresence = () => {
+    const chanName = this.state.currentChannel;
     this.getHereNow(chanName);
+    this.getHistory(chanName, 5);
     this.getPresence(chanName);
   };
 
@@ -139,7 +155,10 @@ export class Chatterbox extends Component {
       if (presence.action === 'join') {
         const prevState = this.state.presence;
 
-        if (!prevState[presence.channel].includes(presence.uuid)) {
+        if (
+          prevState[presence.channel] === undefined ||
+          !prevState[presence.channel].includes(presence.uuid)
+        ) {
           prevState[presence.channel].push(presence.uuid);
           this.setState({ presence: prevState });
         }
@@ -182,7 +201,6 @@ export class Chatterbox extends Component {
             occupant => occupant.uuid
           );
           channelPres[chName] = users;
-          console.log(channelPres);
           this.setState({ presence: channelPres });
         });
       }
