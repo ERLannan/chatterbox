@@ -1,5 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+const Linkify = require('linkifyjs/react');
+
+var options = {
+  /* … */
+};
 
 export default function Message(props) {
   const messageContent = !props.me ? (
@@ -18,9 +23,16 @@ export default function Message(props) {
               {props.name} - {props.publishedtime}
             </small>
           </p>
-          <p className='text-burstingblue bg-white rounded shadow p-1'>
+          <Linkify
+            tagName='p'
+            className='text-burstingblue bg-white rounded shadow p-1'
+            options={options}
+          >
             {props.text}
-          </p>
+          </Linkify>
+          {/* <p className='text-burstingblue bg-white rounded shadow p-1'>
+            {contentString}
+          </p> */}
         </div>
       </div>
     </div>
@@ -33,7 +45,13 @@ export default function Message(props) {
               {props.name} - {props.publishedtime}
             </small>
           </p>
-          <p className='text-white bg-teal rounded shadow p-1'>{props.text}</p>
+          <Linkify
+            tagName='p'
+            className='text-burstingblue bg-white rounded shadow p-1'
+            options={options}
+          >
+            {props.text}
+          </Linkify>
         </div>
         <div className='chat-profile-img-container d-none d-lg-flex justify-content-center'>
           <img

@@ -75,6 +75,19 @@
   height: 40px;
 }
 
+a {
+  color: #0abfbc;
+  font-style: italic;
+}
+
+a:link {
+  color: #0abfbc;
+}
+
+a:hover {
+  color: #13747d;
+}
+
 @media (min-width: 768px) {
   .chat-container {
     border-right: 1px solid #fc354c;
