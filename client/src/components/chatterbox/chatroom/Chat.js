@@ -11,7 +11,9 @@ function Chat(props) {
 
       let tod = 'am';
       let hour = new Date(msg.timetoken / 10000).getHours();
-      const min = new Date(msg.timetoken / 10000).getMinutes();
+      const min = ('0' + new Date(msg.timetoken / 10000).getMinutes()).slice(
+        -2
+      );
 
       if (hour > 12) {
         hour = hour - 12;

@@ -135,7 +135,7 @@ export class Chatterbox extends Component {
   getHistoryAndPresence = () => {
     const chanName = this.state.currentChannel;
     this.getHereNow(chanName);
-    this.getHistory(chanName, 10);
+    this.getHistory(chanName, 20);
     this.getPresence(chanName);
   };
 
