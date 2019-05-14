@@ -14,20 +14,19 @@ export class Chatterbox extends Component {
   constructor(props) {
     super(props);
     const { user } = this.props.auth;
-    console.log(`Token: ${localStorage.jwtToken}`);
     this.pubnub = new PubNubReact({
       publishKey: 'pub-c-5292021b-e55c-4080-a086-689389d143de',
       subscribeKey: 'sub-c-936f22c2-82cf-11e7-9034-1e9edc6dd7f6',
       authKey: localStorage.jwtToken,
-      uuid: user.name,
-      logVerbosity: true
+      uuid: user.name
+      // logVerbosity: true
     });
     this.testChannel = 'Chatterbox-Update-Community-Channels';
     this.pubnub.init(this);
   }
 
   state = {
-    messages: [],
+    messages: {},
     id: '',
     presence: {},
     loading: true,
@@ -35,13 +34,19 @@ export class Chatterbox extends Component {
     channelGroups: ['Chatterbox-Update-Community-Channels']
   };
 
-  addMessage = msg => {
+  addMessage = (chanName, msg) => {
+    let currMessages = {};
+    if (this.state.messages[chanName] !== undefined) {
+      currMessages[chanName] = [...this.state.messages[chanName], msg];
+    } else {
+      currMessages[chanName] = [msg];
+    }
+    console.log('Current Messages');
+    console.log(currMessages);
     this.setState(prevState => ({
-      messages: [...prevState.messages, msg]
+      messages: { ...currMessages }
     }));
   };
-
-  componentWillMount() {}
 
   componentDidMount = () => {
     setTimeout(() => {
@@ -54,13 +59,12 @@ export class Chatterbox extends Component {
         status: statusEvent => {
           // console.log(statusEvent);
           if (statusEvent.category === 'PNConnectedCategory') {
-            this.setState({ loading: false });
             this.getHistoryAndPresence();
           }
         },
         message: message => {
           // handle message
-          this.addMessage(message);
+          this.addMessage(this.state.currentChannel, message);
         },
         presence: presenceEvent => {
           if (presenceEvent.action === 'join') {
@@ -103,7 +107,13 @@ export class Chatterbox extends Component {
   }
 
   onChannelSelectClickHandler = value => {
-    console.log(value);
+    // console.log(`Clicked: ${value}`);
+    // // const messages = this.pubnub.getMessage(value);
+    // this.pubnub.getMessage(value.toString, msg => {
+    //   console.log(msg);
+    // });
+    // this.setState({ messages: this.pubnub.getMessage(value) });
+    this.setState({ currentChannel: value });
   };
 
   onPublishHandler = msg => {
@@ -129,49 +139,55 @@ export class Chatterbox extends Component {
   };
 
   render = () => {
-    const messages = [...this.state.messages];
     // const pres = [...this.state.presence];
-    console.log(this.state);
-    let userList;
-    let keys;
+    let content;
     if (!this.state.loading) {
-      userList =
+      let messages = [];
+      if (this.state.messages[this.state.currentChannel] !== undefined) {
+        messages = this.state.messages[this.state.currentChannel];
+      }
+
+      console.log(messages);
+
+      const userList =
         this.state.presence[this.state.currentChannel] !== undefined ? (
           <UserList users={this.state.presence[this.state.currentChannel]} />
         ) : null;
 
-      keys =
+      const keys =
         this.state.presence !== undefined
           ? Object.keys(this.state.presence)
           : null;
-    }
 
-    const content = this.state.loading ? (
-      <div className='align-center pt-5 mt-5'>
-        <Spinner />
-      </div>
-    ) : (
-      <div className='d-flex flex-row justify-content-between chat-room'>
-        <div className='container pt-2 room-list d-none d-lg-block'>
-          <h5>Rooms</h5>
-          <RoomList
-            rooms={keys}
-            onChannelSelect={this.onChannelSelectClickHandler}
-          />
+      content = (
+        <div className='d-flex flex-row justify-content-between chat-room'>
+          <div className='container pt-2 room-list d-none d-lg-block'>
+            <h5>Rooms</h5>
+            <RoomList
+              rooms={keys}
+              onChannelSelect={this.onChannelSelectClickHandler}
+            />
+          </div>
+          <div className='chat-container fluid-container d-flex flex-column justify-content-center'>
+            <ChatRoom
+              messages={messages}
+              publishMessage={this.onPublishHandler}
+              id={this.state.id}
+            />
+          </div>
+          <div className='container pt-2 user-list text-center d-none d-md-block'>
+            <h5>Users</h5>
+            {userList}
+          </div>
         </div>
-        <div className='chat-container fluid-container d-flex flex-column justify-content-center'>
-          <ChatRoom
-            messages={messages}
-            publishMessage={this.onPublishHandler}
-            id={this.state.id}
-          />
+      );
+    } else {
+      content = (
+        <div className='align-center pt-5 mt-5'>
+          <Spinner />
         </div>
-        <div className='container pt-2 user-list text-center d-none d-md-block'>
-          <h5>Users</h5>
-          {userList}
-        </div>
-      </div>
-    );
+      );
+    }
 
     return (
       <div className='fluid-container fullpage-container bg-secondary text-white pt-5'>
@@ -181,20 +197,21 @@ export class Chatterbox extends Component {
   };
   /// PubNub methods
   getHistoryAndPresence = () => {
+    console.log(`Current Channel: ${this.state.currentChannel}`);
     this.getHereNow([...this.state.channelGroups]);
     this.getHistory(this.state.currentChannel, 20);
   };
 
-  subscribeToChannel = chanName => {
-    this.pubnub.subscribe({
-      channels: [chanName],
-      withPresence: true
-    });
+  // subscribeToChannel = chanName => {
+  //   this.pubnub.subscribe({
+  //     channels: [chanName],
+  //     withPresence: true
+  //   });
 
-    this.pubnub.getMessage(chanName, msg => {
-      this.addMessage(msg);
-    });
-  };
+  //   this.pubnub.getMessage(chanName, msg => {
+  //     this.addMessage(msg);
+  //   });
+  // };
 
   subscribeToChannelGroups = channelGroups => {
     this.pubnub.subscribe({
@@ -233,11 +250,8 @@ export class Chatterbox extends Component {
         count: count
       },
       (status, response) => {
-        console.log('History -----');
-        console.log(response);
-        console.log(status);
         response.messages.forEach(msg => {
-          this.addMessage(msg);
+          this.addMessage(chanName, msg);
         });
       }
     );
@@ -250,8 +264,6 @@ export class Chatterbox extends Component {
       },
       (status, response) => {
         const channelPres = {};
-        // console.log(status);
-        // console.log(response);
         Object.keys(response.channels).forEach(chName => {
           const users = response.channels[chName].occupants.map(
             occupant => occupant.uuid

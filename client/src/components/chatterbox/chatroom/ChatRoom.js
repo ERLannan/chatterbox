@@ -59,7 +59,7 @@ export class ChatRoom extends Component {
 }
 
 ChatRoom.propTypes = {
-  messages: PropTypes.array.isRequired,
+  messages: PropTypes.array,
   publishMessage: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired
 };
