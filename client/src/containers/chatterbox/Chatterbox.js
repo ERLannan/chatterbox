@@ -34,20 +34,6 @@ export class Chatterbox extends Component {
     channelGroups: ['Chatterbox-Update-Community-Channels']
   };
 
-  addMessage = (chanName, msg) => {
-    let currMessages = {};
-    if (this.state.messages[chanName] !== undefined) {
-      currMessages[chanName] = [...this.state.messages[chanName], msg];
-    } else {
-      currMessages[chanName] = [msg];
-    }
-    console.log('Current Messages');
-    console.log(currMessages);
-    this.setState(prevState => ({
-      messages: { ...currMessages }
-    }));
-  };
-
   componentDidMount = () => {
     setTimeout(() => {
       // this.setState({ loading: false });
@@ -107,12 +93,6 @@ export class Chatterbox extends Component {
   }
 
   onChannelSelectClickHandler = value => {
-    // console.log(`Clicked: ${value}`);
-    // // const messages = this.pubnub.getMessage(value);
-    // this.pubnub.getMessage(value.toString, msg => {
-    //   console.log(msg);
-    // });
-    // this.setState({ messages: this.pubnub.getMessage(value) });
     this.setState({ currentChannel: value });
   };
 
@@ -154,6 +134,7 @@ export class Chatterbox extends Component {
           <UserList users={this.state.presence[this.state.currentChannel]} />
         ) : null;
 
+      console.log(this.state.presence);
       const keys =
         this.state.presence !== undefined
           ? Object.keys(this.state.presence)
@@ -195,23 +176,25 @@ export class Chatterbox extends Component {
       </div>
     );
   };
+
   /// PubNub methods
+
+  addMessage = (chanName, msg) => {
+    let currMessages = {};
+    if (this.state.messages[chanName] !== undefined) {
+      currMessages[chanName] = [...this.state.messages[chanName], msg];
+    } else {
+      currMessages[chanName] = [msg];
+    }
+    this.setState(prevState => ({
+      messages: currMessages
+    }));
+  };
+
   getHistoryAndPresence = () => {
-    console.log(`Current Channel: ${this.state.currentChannel}`);
     this.getHereNow([...this.state.channelGroups]);
     this.getHistory(this.state.currentChannel, 20);
   };
-
-  // subscribeToChannel = chanName => {
-  //   this.pubnub.subscribe({
-  //     channels: [chanName],
-  //     withPresence: true
-  //   });
-
-  //   this.pubnub.getMessage(chanName, msg => {
-  //     this.addMessage(msg);
-  //   });
-  // };
 
   subscribeToChannelGroups = channelGroups => {
     this.pubnub.subscribe({
