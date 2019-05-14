@@ -84,11 +84,19 @@ router.post('/login', (req, res) => {
         const payload = {
           id: user.id,
           name: user.name,
-          avatar: user.avatar
+          avatar: user.avatar,
+          groups: user.groups
         };
         jwt.sign(payload, keys.secret, { expiresIn: '24h' }, (err, token) => {
           const bearerToken = 'Bearer ' + token;
-          pnManager.authorizeToken(bearerToken);
+          pnManager
+            .authorizeToken(bearerToken)
+            .then(res => {
+              console.log(`Success: ${res.statusCode}`);
+            })
+            .catch(err => {
+              console.log(`Error: ${err}`);
+            });
 
           res.json({
             success: true,
@@ -110,10 +118,12 @@ router.get(
   '/current',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
+    console.log(req.user);
     return res.json({
       id: req.user.id,
       name: req.user.name,
-      email: req.user.email
+      email: req.user.email,
+      groups: req.user.groups
     });
   }
 );

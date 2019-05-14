@@ -27,6 +27,17 @@ require('./config/passport')(passport);
 app.use('/api/users', users);
 
 pnManager.init();
+// pnManager
+//   .addChannelsToChannelGroup(
+//     ['Chatterbox-News', 'Chatterbox-Patch-Notes'],
+//     'Chatterbox-Update-Community-Channels'
+//   )
+//   .then(res => {
+//     console.log(`Success: ${res.statusCode}`);
+//   })
+//   .catch(err => {
+//     console.log(`Error: ${err}`);
+//   });
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files

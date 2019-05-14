@@ -18,6 +18,7 @@ import Chatterbox from './containers/chatterbox/Chatterbox';
 
 if (localStorage.jwtToken) {
   //Set auth tokenß
+  console.log(localStorage.jwtToken);
   setAuthToken(localStorage.jwtToken);
   //Decode token
   const decoded = jwt_decode(localStorage.jwtToken);

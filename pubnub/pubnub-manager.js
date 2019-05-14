@@ -13,42 +13,93 @@ pnManager = {
     pubnub.addListener({
       status: function(statusEvent) {
         if (statusEvent.category === 'PNConnectedCategory') {
-          // var publishConfig = {
-          //   channel: 'global_channel',
-          //   message: {
-          //     text: 'Server started'
-          //   }
-          // };
-          // pubnub.publish(publishConfig, function(status, response) {
-          //   console.log(status, response);
-          // });
         }
       },
       message: function(msg) {
         console.log(msg.message.text);
       }
     });
-    // pubnub.subscribe({
-    //   channels: ['global_channel']
-    // });
   },
-  authorizeToken: jwtToken => {
+  authorizeToken: (jwtToken, channelGroups = undefined) => {
     console.log(jwtToken);
-    pubnub.grant(
-      {
-        channels: ['global_channel', 'global_channel-pnpres'],
-        // channelGroups: [cg1, cg2],
-        authKeys: [jwtToken],
-        ttl: 1440, // 0 for infinite
-        read: true, // false to disallow
-        write: true, // false to disallow
-        manage: false // false to disallow
-      },
-      function(status) {
-        // handle state setting response
-        console.log(status);
-      }
-    );
+    return new Promise((resolve, reject) => {
+      pubnub.grant(
+        {
+          channels: ['global_channel'],
+          channelGroups: [
+            'Chatterbox-Update-Community-Channels',
+            'Chatterbox-Update-Community-Channels-pnpres'
+          ],
+          authKeys: [jwtToken],
+          ttl: 1440, // 0 for infinite
+          read: true, // false to disallow
+          write: true, // false to disallow
+          manage: false // false to disallow
+        },
+        function(status) {
+          if (status.error) {
+            reject(Error(status.error));
+          } else {
+            pubnub.grant(
+              {
+                channels: ['global-channel'],
+                authKeys: [jwtToken],
+                ttl: 1440, // 0 for infinite
+                read: true, // false to disallow
+                write: true, // false to disallow
+                manage: false // false to disallow
+              },
+              function(status) {
+                if (status.error) {
+                  reject(Error(status.error));
+                } else {
+                  resolve(status);
+                }
+              }
+            );
+            // if (channelGroups === undefined) {
+            //   resolve(status);
+            // } else {
+            //   pubnub.grant(
+            //     {
+            //       channelGroups: [...channelGroups],
+            //       authKeys: [jwtToken],
+            //       ttl: 1440, // 0 for infinite
+            //       read: true, // false to disallow
+            //       write: true, // false to disallow
+            //       manage: false // false to disallow
+            //     },
+            //     function(status) {
+            //       if (!status.error) {
+            //         reject(Error(status.error));
+            //       } else {
+            //         resolve(status);
+            //       }
+            //     }
+            //   );
+            // }
+          }
+        }
+      );
+    });
+  },
+  addChannelsToChannelGroup: (channels, groupName) => {
+    return new Promise((resolve, reject) => {
+      pubnub.channelGroups.addChannels(
+        {
+          channels: [...channels],
+          channelGroup: groupName
+        },
+        function(status) {
+          if (status.error) {
+            console.log(status);
+            reject(Error(status.error));
+          } else {
+            resolve(status);
+          }
+        }
+      );
+    });
   }
 };
 
