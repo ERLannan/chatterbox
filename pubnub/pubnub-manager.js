@@ -57,27 +57,6 @@ pnManager = {
                 }
               }
             );
-            // if (channelGroups === undefined) {
-            //   resolve(status);
-            // } else {
-            //   pubnub.grant(
-            //     {
-            //       channelGroups: [...channelGroups],
-            //       authKeys: [jwtToken],
-            //       ttl: 1440, // 0 for infinite
-            //       read: true, // false to disallow
-            //       write: true, // false to disallow
-            //       manage: false // false to disallow
-            //     },
-            //     function(status) {
-            //       if (!status.error) {
-            //         reject(Error(status.error));
-            //       } else {
-            //         resolve(status);
-            //       }
-            //     }
-            //   );
-            // }
           }
         }
       );
@@ -93,6 +72,24 @@ pnManager = {
         function(status) {
           if (status.error) {
             console.log(status);
+            reject(Error(status.error));
+          } else {
+            resolve(status);
+          }
+        }
+      );
+    });
+  },
+  removeChannelsFromChannelGroup: (channels, groupName) => {
+    return new Promise((resolve, reject) => {
+      pubnub.channelGroups.removeChannels(
+        {
+          channels: [...channels],
+          channelGroup: groupName
+        },
+        function(status) {
+          if (status.error) {
+            console.log('operation failed w/ error:', status);
             reject(Error(status.error));
           } else {
             resolve(status);

@@ -73,7 +73,7 @@ router.post('/login', (req, res) => {
   //find user by email
   User.findOne({ email }).then(user => {
     if (!user) {
-      errors.email = 'User not found';
+      errors.loginemail = 'User not found';
       return res.status('404').json(errors);
     }
 

@@ -25,6 +25,7 @@ class Navbar extends Component {
   };
 
   onSubmit = event => {
+    console.log('submit');
     event.preventDefault();
     const usr = {
       email: this.state.email.toString(),
@@ -36,11 +37,11 @@ class Navbar extends Component {
 
   render() {
     const { isAuthenticated, isLoginScreen, user } = this.props.auth;
-    // const { errors } = this.state;
+    const { errors } = this.state;
+
     const onLogoutClick = event => {
       event.preventDefault();
       this.props.logoutUser();
-      //      window.location.href = '/login';
     };
 
     const authLinks = (
@@ -72,6 +73,7 @@ class Navbar extends Component {
                   placeholder='Email'
                   value={this.state.email}
                   onChange={this.onChange}
+                  error={errors.loginemail}
                 />
               </div>
               <div className='col'>
@@ -82,6 +84,7 @@ class Navbar extends Component {
                   placeholder='Password'
                   value={this.state.password}
                   onChange={this.onChange}
+                  error={errors.loginpassword}
                 />
               </div>
               <button type='submit' className='btn btn-brightred'>

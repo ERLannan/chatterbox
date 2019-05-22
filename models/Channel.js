@@ -3,8 +3,18 @@ const Schema = mongoose.Schema;
 
 const ChannelSchema = new Schema({
   creator: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'users'
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    avatar: {
+      type: String,
+      required: true
+    }
   },
   name: {
     type: String,
@@ -17,15 +27,39 @@ const ChannelSchema = new Schema({
   image: {
     type: String
   },
-  channelGroupName: {
+  publicchannels: [
+    {
+      name: {
+        type: String,
+        required: true
+      },
+      pnName: {
+        type: String,
+        required: true
+      }
+    }
+  ],
+  privatechannels: [
+    {
+      name: {
+        type: String,
+        required: true
+      },
+      pnName: {
+        type: String,
+        required: true
+      }
+    }
+  ],
+  publichchannelgroup: {
     type: String,
     required: true
   },
-  membersPresenceChannelGroup: {
+  memberspresencechannel: {
     type: String,
     required: true
   },
-  protectedChannelGroup: {
+  protectedchannelgroup: {
     type: String,
     required: true
   },
@@ -34,6 +68,14 @@ const ChannelSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId,
         ref: 'users'
+      },
+      name: {
+        type: String,
+        required: true
+      },
+      avatar: {
+        type: String,
+        required: true
       }
     }
   ],
@@ -42,14 +84,6 @@ const ChannelSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId,
         ref: 'users'
-      },
-      inboundChannel: {
-        type: String,
-        required: true
-      },
-      presenceChannel: {
-        type: String,
-        required: true
       },
       name: {
         type: String,
@@ -62,3 +96,5 @@ const ChannelSchema = new Schema({
     }
   ]
 });
+
+module.exports = Channel = mongoose.model('channels', ChannelSchema);

@@ -35,52 +35,56 @@ export class Chatterbox extends Component {
   };
 
   componentDidMount = () => {
+    this.pubnub.addListener({
+      status: statusEvent => {
+        console.log(statusEvent);
+        if (statusEvent.category === 'PNConnectedCategory') {
+          this.getHistoryAndPresence();
+          if (this.state.loading === true) {
+            this.setState({ loading: false });
+          }
+        }
+      },
+      message: message => {
+        // handle message
+        this.addMessage(this.state.currentChannel, message);
+      },
+      presence: presenceEvent => {
+        if (presenceEvent.action === 'join') {
+          let prevState = {};
+          if (this.state.presence !== undefined) {
+            prevState = { ...this.state.presence };
+          }
+
+          if (
+            prevState[presenceEvent.channel] === undefined ||
+            !prevState[presenceEvent.channel].includes(presenceEvent.uuid)
+          ) {
+            const newUserList = [presenceEvent.uuid];
+            prevState[presenceEvent.channel] = newUserList;
+            this.setState({ presence: prevState });
+          }
+        } else if (presenceEvent.action === 'leave') {
+          const prevState = this.state.presence;
+          if (presenceEvent.uuid !== this.pubnub.getUUID()) {
+            const newUserList = prevState[presenceEvent.channel].filter(
+              user => {
+                return user !== presenceEvent.uuid;
+              }
+            );
+            prevState[presenceEvent.channel] = newUserList;
+            this.setState({ presence: prevState });
+          }
+        }
+      }
+    });
     setTimeout(() => {
       // this.setState({ loading: false });
       const { user } = this.props.auth;
       this.setState({
         id: user.id
       });
-      this.pubnub.addListener({
-        status: statusEvent => {
-          // console.log(statusEvent);
-          if (statusEvent.category === 'PNConnectedCategory') {
-            this.getHistoryAndPresence();
-          }
-        },
-        message: message => {
-          // handle message
-          this.addMessage(this.state.currentChannel, message);
-        },
-        presence: presenceEvent => {
-          if (presenceEvent.action === 'join') {
-            let prevState = {};
-            if (this.state.presence !== undefined) {
-              prevState = { ...this.state.presence };
-            }
 
-            if (
-              prevState[presenceEvent.channel] === undefined ||
-              !prevState[presenceEvent.channel].includes(presenceEvent.uuid)
-            ) {
-              const newUserList = [presenceEvent.uuid];
-              prevState[presenceEvent.channel] = newUserList;
-              this.setState({ presence: prevState });
-            }
-          } else if (presenceEvent.action === 'leave') {
-            const prevState = this.state.presence;
-            if (presenceEvent.uuid !== this.pubnub.getUUID()) {
-              const newUserList = prevState[presenceEvent.channel].filter(
-                user => {
-                  return user !== presenceEvent.uuid;
-                }
-              );
-              prevState[presenceEvent.channel] = newUserList;
-              this.setState({ presence: prevState });
-            }
-          }
-        }
-      });
       this.subscribeToChannelGroups([user.groups.defaultChannelGroup]);
     }, 3000);
   };
@@ -233,9 +237,11 @@ export class Chatterbox extends Component {
         count: count
       },
       (status, response) => {
-        response.messages.forEach(msg => {
-          this.addMessage(chanName, msg);
-        });
+        if (response.messages !== undefined) {
+          response.messages.forEach(msg => {
+            this.addMessage(chanName, msg);
+          });
+        }
       }
     );
   };

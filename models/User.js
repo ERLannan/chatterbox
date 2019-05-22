@@ -27,7 +27,19 @@ const UserSchema = new Schema({
     default: {
       defaultChannelGroup: 'Chatterbox-Update-Community-Channels'
     }
-  }
+  },
+  channels: [
+    {
+      channel: {
+        type: Schema.Types.ObjectId,
+        ref: 'channels'
+      },
+      name: {
+        type: String,
+        required: true
+      }
+    }
+  ]
 });
 
 module.exports = User = mongoose.model('users', UserSchema);

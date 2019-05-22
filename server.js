@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const users = require('./routes/api/users');
+const channels = require('./routes/api/channels');
 const pnManager = require('./pubnub/pubnub-manager');
 const path = require('path');
 const app = express();
@@ -25,11 +26,24 @@ mongoose
 app.use(passport.initialize());
 require('./config/passport')(passport);
 app.use('/api/users', users);
+app.use('/api/channels', channels);
 
 pnManager.init();
 // pnManager
 //   .addChannelsToChannelGroup(
-//     ['Chatterbox-News', 'Chatterbox-Patch-Notes'],
+//     ['Chatterbox-News', 'Chatterbox-Patch-Notes', 'global_channel'],
+//     'Chatterbox-Update-Community-Channels'
+//   )
+//   .then(res => {
+//     console.log(`Success: ${res.statusCode}`);
+//   })
+//   .catch(err => {
+//     console.log(`Error: ${err}`);
+//   });
+
+// pnManager
+//   .removeChannelsFromChannelGroup(
+//     ['global-channel'],
 //     'Chatterbox-Update-Community-Channels'
 //   )
 //   .then(res => {
